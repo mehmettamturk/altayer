@@ -1,8 +1,8 @@
 $desktop-width: 960px;
-$mobile-width: 90%;
+$mobile-width: 100%;
 
 body {
-    font-family: 'Helvetica Neue',sans-serif;
+    font-family: 'Helvetica Neue',Arial,sans-serif;
 }
 
 .navbar-wrapper {
@@ -15,7 +15,7 @@ body {
 }
 
 .on-web {
-    display: block;
+    display: inline-block;
 }
 
 @media only screen and (max-width: $desktop-width) {
@@ -25,6 +25,10 @@ body {
 
     .on-web {
         display: none;
+    }
+
+    .pipe.on-web {
+        display: none!important;
     }
 
     .navbar-wrapper {
@@ -42,7 +46,10 @@ body {
     }
 
     .navbar-toggle .icon-bar {
-        background: #bdbdbd;
+        background: #3c3b3b;
+        width: 18px;
+        height: 2px;
+        border-radius: 0;
     }
 
     .user-menu.on-mobile .link {
@@ -51,5 +58,32 @@ body {
         color: #4c4b4c;
         font-size: 12px;
         margin-left: 10px;
+    }
+
+    .menu {
+        height: 184px!important;
+    }
+
+    .menu-part.left {
+        width: 50px!important;
+    }
+
+    .menu-part.center {
+        width: calc(100% - 100px)!important;
+    }
+
+    .menu-part.right {
+        width: 100%!important;
+        text-align: center!important;
+    }
+
+    .menu-part.right.text-container {
+        margin-top: 5px !important;
+        padding-right: 0 !important;
+        height: 25px;
+    }
+
+    .menu-part.right.on-mobile {
+        width: 50px!important;
     }
 }

@@ -47,5 +47,18 @@
             positionX: 'right',
             positionY: 'top'
         });
+
+        $httpProvider.interceptors.push(['$q', function($q) {
+            return {
+                request: function (config) {
+                    if (!config.timeout) {
+                        config.cancel = $q.defer();
+                        config.timeout = config.cancel.promise;
+                    }
+
+                    return config;
+                }
+            }
+        }]);
     };
 })();

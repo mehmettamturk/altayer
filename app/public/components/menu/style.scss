@@ -4,21 +4,56 @@
   width: 100%;
   text-align: center;
   margin: 0 auto;
-  height: 180px;
+  height: 195px;
 
   .menu-item {
 	width: 100%;
   }
 
   .top-menu {
-	margin-bottom: 10px;
+	margin: 11px 0 24px;
+
+	.menu-part {
+	  margin: 0;
+	  padding: 0;
+	}
+
+	.menu-part.left {
+	  width: 411px;
+	}
+
+	.menu-part.center {
+	  width: 138px;
+
+	  .logo {
+		margin: 0 auto;
+	  }
+	}
+
+	.menu-part.right {
+	  width: 411px;
+	  text-align: right;
+	  padding-right: 14px;
+
+	  .pipe {
+		width: 2px;
+		height: 9px;
+		background: #898989;
+		display: inline-block;
+		margin: 0 4px;
+		border-right: 1px solid #b9b9b9;
+		position: relative;
+		top: 4px;
+	  }
+	}
 
 	a.link {
 	  position: relative;
-	  top: 5px;
+	  top: 4px;
 	  color: #4c4b4c;
 	  font-size: 12px;
-	  margin-left: 10px;
+	  margin: 0 0 0 0;
+	  font-family: 'Helvetica Neue',Arial,sans-serif;
 
 	  &:hover {
 		text-decoration: none;
@@ -27,21 +62,23 @@
   }
 
   .sub-menu {
-	margin-bottom: 20px;
+	margin: 0 0 19px 24px;
+	text-align: left;
 
 	a {
 	  font-size: 17px;
 	  position: relative;
-	  margin: 0 10px;
+	  margin: 0 23px 0 0;
 	  text-decoration: none;
 	  color: #4d4d4d;
 	  font-family: 'Ropa Sans', sans-serif;
+	  letter-spacing: 0.4px;
 	}
   }
 
   .search-menu {
 	width: 300px;
-	margin: 0 auto 40px;
+	margin: 0 auto 0;
 	position: relative;
 
 	input {
@@ -51,29 +88,32 @@
 	  font-style: italic;
 	  border-bottom: 1px solid #bdbdbd;
 	  width: 300px;
+	  font-family: "Helvetica Neue",Arial,sans-serif;
 	}
   }
 
   .search-results {
 	position: absolute;
 	background: white;
-	padding: 20px 0;
+	padding: 30px 15px;
 	width: 300px;
 	border: 1px solid #bdbdbd;
 	border-top: none;
 	z-index: 2;
 
 	a {
-	  font-weight: bold;
 	  line-height: 25px;
 	  display: block;
 	  cursor: pointer;
-	  color: #4c4b4c;
+	  color: black;
+	  text-align: left;
+	  margin-bottom: 3px;
+	  font-size: 13px;
+	  letter-spacing: -0.3px;
 	}
   }
 
   .search-button {
-	background: url('/img/search.png');
 	display: inline-block;
 	height: 16px;
 	width: 16px;
@@ -88,27 +128,30 @@
 
   .navbar-toggle {
 	cursor: pointer;
+	margin-top: 15px;
+	margin-left: -1px;
   }
 
   .shopping-bag {
 	cursor: pointer;
-	background: url('/img/bag.png');
 	display: inline-block;
 	height: 21px;
 	width: 21px;
 	position: relative;
-	top: 14px;
+	top: 18px;
+	left: 6px;
   }
 
   .sub-menu.collapse.in {
 	background: #b9a83c;
 	overflow: hidden;
 	height: auto;
-	padding: 0;
+	padding: 10px;
 	position: absolute;
-	top: 50px;
+	top: 28px;
 	width: 200px;
-	left: 26px;
+	left: -15px;
+	z-index: 2;
   }
 
   .sub-menu.collapse.in a {

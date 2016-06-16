@@ -12,38 +12,41 @@ const rename = require('gulp-rename');
 const cssmin = require('gulp-minify-css');
 const sass = require('gulp-sass');
 const templateCache = require('gulp-angular-templatecache');
-
+const spritesmith = require('gulp.spritesmith');
+const buffer = require('vinyl-buffer');
+const csso = require('gulp-csso');
+const imagemin = require('gulp-imagemin');
+const merge = require('merge-stream');
 
 let vendorCssFiles = [
     'public/lib/bootstrap/dist/css/bootstrap.min.css'
 ];
 
 let cssFiles = [
-  'public/css/reset.*css',
-  'public/css/*.*css',
-  'public/components/**/*.*css'
+    'public/css/*.scss',
+    'public/components/**/*.scss'
 ];
 
 let vendorJsFiles = [
-  'public/lib/jquery/dist/jquery.min.js',
-  'public/lib/jquery-ui/jquery-ui.min.js',
-  'public/lib/jquery-ui/ui/i18n/datepicker-tr.js',
-  'public/lib/semantic/dist/semantic.min.js',
-  'public/lib/angular/angular.min.js',
-  'public/lib/moment/moment.js',
-  'public/lib/angular-sanitize/angular-sanitize.min.js',
-  'public/lib/angular-resource/angular-resource.min.js',
-  'public/lib/angular-touch/angular-touch.min.js',
-  'public/lib/angular-animate/angular-animate.min.js',
-  'public/lib/angular-ui-notification/dist/angular-ui-notification.min.js',
-  'public/lib/angular-ui-router/release/angular-ui-router.min.js',
-  'public/lib/bootstrap/dist/js/bootstrap.min.js',
-  'public/lib/angular-click-outside/clickoutside.directive.js'
+    'public/lib/jquery/dist/jquery.min.js',
+    'public/lib/jquery-ui/jquery-ui.min.js',
+    'public/lib/jquery-ui/ui/i18n/datepicker-tr.js',
+    'public/lib/semantic/dist/semantic.min.js',
+    'public/lib/angular/angular.min.js',
+    'public/lib/moment/moment.js',
+    'public/lib/angular-sanitize/angular-sanitize.min.js',
+    'public/lib/angular-resource/angular-resource.min.js',
+    'public/lib/angular-touch/angular-touch.min.js',
+    'public/lib/angular-animate/angular-animate.min.js',
+    'public/lib/angular-ui-notification/dist/angular-ui-notification.min.js',
+    'public/lib/angular-ui-router/release/angular-ui-router.min.js',
+    'public/lib/bootstrap/dist/js/bootstrap.min.js',
+    'public/lib/angular-click-outside/clickoutside.directive.js'
 ];
 
 let jsFiles = [
-  'public/js/**/*.js',
-  'public/components/**/*.js'
+    'public/js/**/*.js',
+    'public/components/**/*.js'
 ];
 
 let fontFiles = [
@@ -74,10 +77,11 @@ gulp.task('clean:after-build', ['inject:build'], () => {
 });
 
 gulp.task('copy', ['clean'], () => {
-    var files = [].concat(vendorCssFiles, cssFiles, vendorJsFiles, jsFiles);
+    var files = [].concat(vendorCssFiles, vendorJsFiles, jsFiles);
     files.push('!public/js/config.js');
     files.push('public/img/**/*');
-    files.push('public/files/**/*');
+    files.push('!public/img/sprite');
+    files.push('!public/img/sprite/*');
 
     return gulp
         .src(files, {base: 'public/'})
@@ -107,7 +111,28 @@ gulp.task('copy:css', ['clean'], () => {
 
     gulp.src(files, {base: "./"})
         .pipe(sass())
+        .pipe(rename(function(data) {
+            data.dirname = data.dirname.replace('public', 'www');
+        }))
         .pipe(gulp.dest("./"));
+});
+
+gulp.task('sprite', function () {
+    var spriteData = gulp.src('public/img/sprite/*.png').pipe(spritesmith({
+        imgName: '../img/sprite.png',
+        cssName: 'sprite.css'
+    }));
+
+    var imgStream = spriteData.img
+        .pipe(buffer())
+        .pipe(imagemin())
+        .pipe(gulp.dest('www/img/'));
+
+    var cssStream = spriteData.css
+        .pipe(csso())
+        .pipe(gulp.dest('www/css'));
+
+    return merge(imgStream, cssStream);
 });
 
 gulp.task('generate-config', ['copy'], () => {
@@ -168,7 +193,8 @@ gulp.task('concat:js', ['minify:js', 'minify:templates', 'concat:vendor-js'], ()
         .pipe(gulp.dest('www/compiled'));
 });
 
-gulp.task('minify:css', ['copy'], () => {
+gulp.task('minify:css', ['copy', 'sprite'], () => {
+    cssFiles.push('www/css/sprite.css');
     return gulp.src(cssFiles)
         .pipe(concat('app.css'))
         .pipe(sass().on('error', sass.logError))
@@ -200,12 +226,16 @@ gulp.task('concat:css', ['minify:css', 'concat:vendor-css'], () => {
         .pipe(gulp.dest('www/compiled'));
 });
 
-gulp.task('inject:dev', ['copy'], () => {
+gulp.task('inject:dev', ['copy', 'generate-config'], () => {
     let allFiles = [].concat(vendorCssFiles, cssFiles, vendorJsFiles, jsFiles);
-    let sources = gulp.src(allFiles, {read: false});
+
+    allFiles = allFiles.map((item) => {
+        return item.replace('public', 'www').replace('scss', 'css');
+    });
+    let sources = gulp.src(allFiles, {read: true});
 
     return gulp
-        .src('public/index.html')
+        .src('www/index.html')
         .pipe(inject(sources, {relative: true, addRootSlash: true}))
         .pipe(gulp.dest('www'));
 });
@@ -236,6 +266,7 @@ gulp.task('watch:build', () => {
 gulp.task('dev', [
     'clean',
     'copy:css',
+    'sprite',
     'copy',
     'copy:templates',
     'copy:fonts',
@@ -245,6 +276,7 @@ gulp.task('dev', [
 
 gulp.task('build', [
     'clean',
+    'sprite',
     'copy',
     'copy:templates',
     'copy:fonts-build',

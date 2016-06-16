@@ -29,6 +29,14 @@
             });
         };
 
+        SearchService.abort = function() {
+            $http.pendingRequests.forEach(function(request) {
+                if (request.cancel) {
+                    request.cancel.resolve('Cancel!');
+                }
+            });
+        };
+
         return SearchService;
     }
 })();

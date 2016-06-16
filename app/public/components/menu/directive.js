@@ -40,16 +40,20 @@
         };
 
         $scope.search = function() {
+            if (window.innerWidth < 960) return;
+
             if ($scope.searchKey && $scope.searchKey.length > 2) {
                 $scope.showSearchResult = true;
                 $scope.searchLoading = true;
 
                 SearchService.search($scope.searchKey, function(data) {
-                    console.log(data)
-
                     $scope.searchResult = data;
                     $scope.searchLoading = false;
                 })
+            } else {
+                $scope.searchLoading = false;
+                $scope.hideResultBox();
+                SearchService.abort();
             }
         }
     }
